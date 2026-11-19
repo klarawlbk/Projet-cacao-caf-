@@ -586,6 +586,32 @@ GAL.forEach(([src, cap]) => {
 lb.onclick = e => { if (e.target !== $('img', lb)) lb.hidden = true; };
 addEventListener('keydown', e => { if (e.key === 'Escape') lb.hidden = true; });
 
+
+// ---------- coloration syntaxique intégrée (R et SQL) ----------
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const KW = {
+  r: /^(function|if|else|for|while|repeat|in|return|next|break|TRUE|FALSE|NULL|NA|Inf|NaN|library|require)$/,
+  sql: /^(select|from|where|group|by|order|having|limit|as|and|or|not|in|is|null|join|on|left|inner|cross|lateral|values|with|over|rows|between|preceding|current|row|partition|case|when|then|else|end|create|table|view|drop|if|exists|insert|into|primary|key|check|numeric|text|date|real|union|all|distinct|desc|asc|cast|int|copy|header|csv|format|true|false)$/i };
+function colorize(src, lang) {
+  const re = lang === 'sql'
+    ? /(--[^\n]*)|('(?:[^'\\]|\\.)*')|(\b\d+(?:\.\d+)?\b)|([A-Za-z_][A-Za-z0-9_]*)(\s*\()?|(\\[a-z]+)/g
+    : /(#[^\n]*)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|(\b\d+(?:\.\d+)?(?:e-?\d+)?L?\b)|([A-Za-z_.][A-Za-z0-9_.]*)(\s*\()?|(<-|->|%[^%\s]*%|==|!=|>=|<=|&&|\|\|)/g;
+  let out = '', last = 0, m;
+  while ((m = re.exec(src))) {
+    out += esc(src.slice(last, m.index)); last = re.lastIndex;
+    if (m[1]) out += `<span class="c-com">${esc(m[1])}</span>`;
+    else if (m[2]) out += `<span class="c-str">${esc(m[2])}</span>`;
+    else if (m[3]) out += `<span class="c-num">${esc(m[3])}</span>`;
+    else if (m[4]) {
+      const w = m[4];
+      if (KW[lang].test(w)) out += `<span class="c-kw">${esc(w)}</span>${m[5] ? esc(m[5]) : ''}`;
+      else if (m[5]) out += `<span class="c-fn">${esc(w)}</span>${esc(m[5])}`;
+      else out += esc(w);
+    } else if (m[6]) out += `<span class="c-op">${esc(m[6])}</span>`;
+  }
+  return out + esc(src.slice(last));
+}
+
 // ---------- visionneuse de code ----------
 const FILES = [
   ['R/projet_cacao_cafe.R', 'Script complet et reproductible : toute l\'analyse en un fichier (annexe F du mémoire).'],
@@ -612,9 +638,8 @@ async function openCode(path, scroll) {
   code.className = ''; code.textContent = 'Chargement…';
   try {
     if (!cache[path]) { const r = await fetch(path); if (!r.ok) throw 0; cache[path] = await r.text(); }
-    code.textContent = cache[path];
-    code.className = 'language-' + (path.endsWith('.sql') ? 'sql' : 'r');
-    if (window.hljs) hljs.highlightElement(code);
+    code.innerHTML = colorize(cache[path], path.endsWith('.sql') ? 'sql' : 'r');
+    code.className = 'lang-' + (path.endsWith('.sql') ? 'sql' : 'r');
   } catch (e) { code.textContent = 'Fichier indisponible ici : utilisez le lien GitHub.'; }
 }
 FILES.forEach(([p]) => { const b = document.createElement('button'); b.textContent = p.split('/')[1]; b.dataset.f = p; b.onclick = () => openCode(p); tabs.appendChild(b); });

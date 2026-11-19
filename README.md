@@ -30,7 +30,7 @@ index.html                  site de présentation (GitHub Pages)
 assets/                     style, scripts et données du site
   data/modele.json          séries, équilibre, multiplicateurs (créé par R/donnees_site.R)
   data/resultats.json       tableaux de résultats (stationnarité, robustesse, diagnostics)
-  vendor/                   bibliothèques locales (sql.js, highlight.js)
+  vendor/                   bibliothèque locale sql.js
 R/
   projet_cacao_cafe.R       script complet et reproductible (annexe F du mémoire)
   travail_R_base_SQL.R      R connecté à PostgreSQL : requêtes, stats en niveau, ARDL, écriture dans la base
@@ -71,4 +71,4 @@ https://www.worldbank.org/en/research/commodity-markets
 
 ## Bibliothèques utilisées par le site
 
-sql.js (SQLite compilé en WebAssembly, licence MIT) et highlight.js (licence BSD), copiées dans `assets/vendor/`.
+sql.js (SQLite compilé en WebAssembly, licence MIT), copiée dans `assets/vendor/`. La coloration du code est intégrée au site.

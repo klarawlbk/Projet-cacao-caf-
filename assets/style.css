@@ -35,7 +35,7 @@ a{color:var(--cafe)}
 h1,h2,h3{font-family:Fraunces,Georgia,serif;line-height:1.15;letter-spacing:-.015em;margin:0}
 h2{font-size:clamp(1.7rem,3.4vw,2.5rem);font-weight:800}
 h3{font-size:1.15rem;font-weight:600;margin-bottom:.4rem}
-code,kbd,pre,.mono{font-family:"JetBrains Mono",ui-monospace,monospace}
+code,kbd,pre,.mono,textarea{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
 code{font-size:.88em;background:var(--surface2);padding:1px 5px;border-radius:5px}
 kbd{font-size:.72em;border:1px solid currentColor;border-radius:4px;padding:0 4px;opacity:.8}
 .wrap{max-width:1160px;margin:0 auto;padding:0 16px}
@@ -313,3 +313,11 @@ footer{padding:40px 0 60px;border-top:1px solid var(--border)}
   .readouts{grid-template-columns:1fr}
   .shockv{font-size:2.4rem}
 }
+
+/* coloration du code (intégrée) */
+.viewer .c-com{color:#8b7d70;font-style:italic}
+.viewer .c-str{color:#9ad08a}
+.viewer .c-num{color:#f0b36a}
+.viewer .c-kw{color:#e98a6b;font-weight:600}
+.viewer .c-fn{color:#7ab4ea}
+.viewer .c-op{color:#e6c15a}
