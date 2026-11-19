@@ -3,6 +3,8 @@
 Projet d'économétrie – Master 1  
 William Ngoiem et Klara Willebrouck
 
+**Site de présentation du projet** : la page `index.html`, publiée avec GitHub Pages (lien en haut à droite du dépôt, rubrique *About*), présente la démarche, les résultats, les figures et permet de lire tous les scripts.
+
 Ce dépôt contient l'ensemble du code utilisé dans notre mémoire : l'analyse économétrique sous **R** et la base de données sous **PostgreSQL**, créée et interrogée dans un terminal Linux (Ubuntu sous WSL).
 
 ## Résultat principal
@@ -33,6 +35,7 @@ SQL/
   analyses_sql_postgresql.sql        analyses complémentaires (jointure, vues, fenêtrage, CORR, REGR)
   donnees_sql.csv                    données importées dans PostgreSQL (exportées par R)
 figures/                             figures du mémoire et captures du terminal
+index.html                           site de présentation (GitHub Pages)
 ```
 
 ## Reproduire l'analyse sous R
