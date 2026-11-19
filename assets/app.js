@@ -111,7 +111,7 @@ function lineChart(host, o) {
       const a = Math.max(s.from, i0), b = Math.min(s.to, i1);
       if (a >= b) continue;
       el('rect', { x: tx(a), y: m.t, width: tx(b) - tx(a), height: H - m.t - m.b, class: 'shade' }, svg);
-      if (s.label) { const right = tx(a) + 100 > W - m.r; const t = el('text', { x: right ? tx(b) - 6 : tx(a) + 6, y: H - m.b - 8, class: 'shadelbl', 'text-anchor': right ? 'end' : 'start' }, svg); t.textContent = W < 600 ? 'Crise' : s.label; }
+      if (s.label) { const right = tx(a) + 100 > W - m.r; const t = el('text', { x: right ? tx(b) - 6 : tx(a) + 6, y: H - m.b - 8, class: 'shadelbl', 'text-anchor': right ? 'end' : 'start' }, svg); t.textContent = W < 600 ? (s.short || s.label) : s.label; }
     }
     if (o.hline != null) el('line', { x1: m.l, x2: W - m.r, y1: ty(o.hline), y2: ty(o.hline), stroke: css('--axis'), 'stroke-width': 1 }, svg);
     for (const r of o.refs || []) {
@@ -126,6 +126,12 @@ function lineChart(host, o) {
         const y = ty(v);
         el('rect', { x: tx(i) - bw / 2, y: Math.min(y, z), width: bw, height: Math.abs(z - y), fill: v >= 0 ? o.bars.pos : o.bars.neg, opacity: .85 }, svg);
       }
+    }
+    // bande (intervalle de confiance)
+    if (o.band) {
+      let up = '', dn = '';
+      for (let i = i0; i <= i1; i++) { const a = o.band.lo[i], b = o.band.hi[i]; if (a == null) continue; up += (up ? 'L' : 'M') + tx(i).toFixed(1) + ',' + ty(Math.min(b, hi)).toFixed(1); dn = 'L' + tx(i).toFixed(1) + ',' + ty(Math.max(a, lo)).toFixed(1) + dn; }
+      if (up) el('path', { d: up + dn + 'Z', fill: o.band.color, opacity: .18 }, svg);
     }
     // aires et lignes
     for (const s of vis) {
@@ -207,13 +213,13 @@ function countUp() {
 let heroLines = null;
 
 // =====================================================================
-Promise.all([fetch('assets/data/modele.json').then(r => r.json()), fetch('assets/data/resultats.json').then(r => r.json())])
-.then(([M, R]) => {
+Promise.all([fetch('assets/data/modele.json').then(r => r.json()), fetch('assets/data/resultats.json').then(r => r.json()), fetch('assets/data/complements.json').then(r => r.json())])
+.then(([M, R, C]) => {
   const dates = M.dates.map(s => new Date(s + 'T00:00:00Z'));
   const N = dates.length;
   const P = M.prix;
   const idx = s => dates.findIndex(d => d.toISOString().slice(0, 7) === s);
-  const CRISE = { from: idx('2024-01'), to: N - 1, label: 'Crise du cacao' };
+  const CRISE = { from: idx('2024-01'), to: N - 1, label: 'Crise du cacao', short: 'Crise' };
 
   // ---------- hero : courbes animées en fond ----------
   heroLines = () => {
@@ -434,7 +440,46 @@ Promise.all([fetch('assets/data/modele.json').then(r => r.json()), fetch('assets
   fo.observe($('#forest')); }
   $('#diags').innerHTML = R.diagnostics.map(d => `<div class="diag"><span class="ck">✓</span><span>${d.test.replace(' – ', ' · ')}</span><span class="p">p = ${fr(d.p, 3)}</span></div>`).join('');
 
-  // ---------- 07 SQL dans le navigateur ----------
+  // ---------- 07 épreuve du temps ----------
+  const recDates = C.recursive.fin.map(s => new Date(s + 'T00:00:00Z'));
+  const recNotes = {
+    recursive: 'Le modèle est réestimé 202 fois, sur un échantillon qui commence toujours en janvier 2000 et s\'allonge d\'un mois à chaque fois (de 2000-2009 à 2000-2026). Avec peu de données, l\'estimation est très incertaine ; dès que l\'échantillon atteint une quinzaine d\'années (fin 2015), la cointégration devient significative et l\'élasticité se stabilise entre 0,65 et 1,02, avant de converger vers 0,87.',
+    glissante: 'Ici, chaque estimation n\'utilise que les 10 dernières années. L\'élasticité devient instable et la cointégration n\'est presque jamais détectée (1 % des fenêtres) : 10 ans ne suffisent pas pour repérer une relation de long terme, qui se lit sur des cycles complets de prix. C\'est un argument pour utiliser toute la période 2000-2026.' };
+  const recChart = lineChart($('#ch-rec'), { x: recDates, series: [], yMin: -0.2, yMax: 2.2, hline: 0, margin: { l: 44 } });
+  charts.push(recChart);
+  function drawRec(k) {
+    const D = C[k], clamp = v => Math.max(-0.2, Math.min(2.2, v));
+    recChart.set({
+      series: [{ name: 'Élasticité', color: css('--cafe'), values: D.elast.map(clamp), width: 2.2, fmt: v => fr(v, 2) },
+               { name: 'Cointégration à 5 %', color: css('--ok'), values: D.elast.map((v, i) => D.p_bornes[i] < 0.05 ? clamp(v) : null), width: 4.5, fmt: v => 'oui' }],
+      band: { lo: D.elast.map((v, i) => v - 1.96 * D.se[i]), hi: D.elast.map((v, i) => v + 1.96 * D.se[i]), color: css('--cafe') },
+      refs: [{ y: 0.869, color: css('--cacao'), label: 'modèle final : 0,87', left: true }],
+      tipExtra: i => `<div class="r"><span>p du test des bornes</span><b>${fr(D.p_bornes[i], 3)}</b></div><div class="r"><span>Échantillon</span><b>${k === 'recursive' ? '2000 → ' : '10 ans → '}${moisFr(recDates[i])}</b></div>`
+    });
+    $('#recnote').textContent = recNotes[k];
+  }
+  drawRec('recursive');
+  $$('#recmode button').forEach(b => b.onclick = () => { $$('#recmode button').forEach(x => x.classList.toggle('on', x === b)); drawRec(b.dataset.r); });
+
+  const PV = C.prevision, pvDates = PV.dates.map(s => new Date(s + 'T00:00:00Z'));
+  const pvStart = PV.dates.indexOf(PV.debut);
+  const prev = lineChart($('#ch-prev'), { x: pvDates, log: false, yMin: 2, margin: { l: 44 },
+    shades: [{ from: pvStart, to: pvDates.length - 1, label: 'Période de prévision', short: 'Prévision' }],
+    yfmt: v => fr(v, 0) + ' $',
+    series: [{ name: 'Observé', color: css('--text'), values: PV.reel, width: 2.4, fmt: v => fr(v, 2) + ' $/kg' },
+             { name: 'Prévision ARDL', color: css('--cafe'), values: PV.prevu, width: 2.4, dash: '7 4', fmt: v => fr(v, 2) + ' $/kg' },
+             { name: 'Sans le cacao', color: css('--bad'), values: PV.sans_cacao, width: 2, dash: '2 4', fmt: v => fr(v, 2) + ' $/kg' },
+             { name: 'Prix figé', color: css('--muted'), values: PV.naif, width: 1.5, dash: '9 4 2 4', fmt: v => fr(v, 2) + ' $/kg' }] });
+  charts.push(prev);
+  const E = PV.rmse, pctErr = v => (Math.exp(v) - 1) * 100;
+  const bars = [['Prévision ARDL', E.mae_ardl, E.rmse_ardl, '--cafe'], ['Prix figé (marche aléatoire)', E.mae_naif, E.rmse_naif, '--muted'], ['Modèle sans le cacao', E.mae_sans_cacao, E.rmse_sans_cacao, '--bad']];
+  const mx = Math.max(...bars.map(b => pctErr(b[1])));
+  $('#errbars').innerHTML = bars.map(b => `<div class="ebar"><div class="top"><span>${b[0]}</span><b>≈ ${fr(pctErr(b[1]), 0)} %</b></div><div class="track"><div class="fill" data-w="${(pctErr(b[1]) / mx * 100).toFixed(1)}%" style="background:var(${b[3]})"></div></div><div class="small muted">RMSE (log) : ${fr(b[2], 3)}</div></div>`).join('') +
+    `<p class="small" style="margin:10px 0 0">Erreur divisée par <b>${fr(E.rmse_naif / E.rmse_ardl, 1)}</b> face au prix figé et par <b>${fr(E.rmse_sans_cacao / E.rmse_ardl, 1)}</b> face au modèle sans cacao.</p>`;
+  const showBars = () => $$('#errbars .fill').forEach(f => f.style.width = f.dataset.w);
+  if ('IntersectionObserver' in window) { const eo = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { showBars(); eo.disconnect(); } }), { threshold: .2 }); eo.observe($('#errbars')); } else showBars();
+
+  // ---------- 08 SQL dans le navigateur ----------
   initSQL(dates, P);
 }).catch(err => {
   console.error(err);
@@ -565,6 +610,32 @@ function initSQL(dates, P) {
   }
 }
 
+
+// ---------- glossaire au survol ----------
+const GLOSS = {
+  cointegration: ['Cointégration', 'Deux prix qui, pris séparément, dérivent sans revenir à une moyenne, mais dont une combinaison reste stable : ils peuvent s\'écarter à court terme, ils finissent toujours par se rejoindre.'],
+  bornes: ['Test des bornes', 'Test de cointégration de Pesaran, Shin et Smith (2001), valable que les séries soient I(0) ou I(1). On compare une statistique F à deux valeurs critiques, une borne basse et une borne haute.'],
+  i1: ['Borne I(1)', 'Valeur critique calculée comme si toutes les variables étaient non stationnaires. La dépasser permet de conclure à la cointégration quel que soit l\'ordre d\'intégration des séries.'],
+  elasticite: ['Élasticité', 'Variation en % du prix du café quand le prix du cacao varie de 1 %. Ici 0,87 : +10 % de cacao donne à terme environ +8,7 % de café.'],
+  ect: ['Terme de correction d\'erreur', 'Coefficient (−0,060) qui mesure la force de rappel vers l\'équilibre : chaque mois, 6 % de l\'écart entre le prix du café et son niveau d\'équilibre se résorbe.'],
+  demivie: ['Demi-vie', 'Temps nécessaire pour combler la moitié d\'un écart à l\'équilibre : ln(0,5) / ln(1 − 0,060) ≈ 11,3 mois.'],
+  multiplicateurs: ['Multiplicateurs dynamiques', 'Effet cumulé, mois après mois, d\'une hausse permanente du cacao sur le café. Ils partent de l\'effet de court terme (0,155) et convergent vers l\'élasticité de long terme (0,869).'],
+  ardl: ['ARDL(2,1,1,0)', 'Modèle autorégressif à retards échelonnés : le café dépend de ses 2 derniers mois, du cacao et du sucre (mois courant et précédent) et du Brent (mois courant). Les retards sont choisis par le critère AIC.'],
+  granger: ['Causalité de Granger', 'Les valeurs passées d\'un prix aident-elles à prévoir l\'autre ? Testée ici par la procédure de Toda-Yamamoto, valable avec des séries non stationnaires.'],
+  exogeneite: ['Exogénéité faible', 'On regarde quel prix réagit quand les deux s\'écartent de leur équilibre. Ici, seul le café corrige l\'écart : le cacao est le marché directeur.'],
+  wasm: ['WebAssembly', 'Format qui permet d\'exécuter dans le navigateur un programme compilé, ici le moteur de base de données SQLite, sans serveur.'],
+  cusum: ['CUSUM', 'Somme cumulée des erreurs de prévision récursives (Brown, Durbin et Evans, 1975). Si elle sort de ses bandes, les coefficients ont changé au cours du temps.'] };
+$$('.gl').forEach(g => {
+  const d = GLOSS[g.dataset.gl]; if (!d) return;
+  g.tabIndex = 0;
+  const show = ev => { tip.classList.add('def'); const r = g.getBoundingClientRect(); showTip(`<div class="t">${d[0]}</div>${d[1]}`, ev && ev.clientX ? ev : { clientX: r.left, clientY: r.bottom }); };
+  const hide = () => { hideTip(); tip.classList.remove('def'); };
+  g.addEventListener('pointerenter', show); g.addEventListener('pointerleave', hide);
+  g.addEventListener('focus', show); g.addEventListener('blur', hide);
+  g.addEventListener('click', e => { e.preventDefault(); show(e); });
+});
+$('#dl-zip').href = `${REPO}/archive/refs/heads/main.zip`;
+
 // ---------- galerie de captures ----------
 const GAL = [
   ['figures/figA1_terminal.png', 'A1 · Terminal Linux : création de la table prix et import du CSV (COPY 321)'],
@@ -622,6 +693,7 @@ const FILES = [
   ['R/etape4_modelisation_ardl.R', 'Étape 4 · combinaisons de contrôles, auto_ardl, AIC/BIC, test des bornes.'],
   ['R/etape5_resultats.R', 'Étape 5 · long terme, ECM, diagnostics check_*, CUSUM.'],
   ['R/etape6_robustesse.R', 'Étape 6 · robustesse, Toda-Yamamoto, exogénéité faible.'],
+  ['R/analyses_complementaires.R', 'Analyses complémentaires : estimation récursive et prévision hors échantillon 2024-2026.'],
   ['R/donnees_site.R', 'Données de ce site : équilibre, multiplicateurs dynamiques, bornes du test.'],
   ['R/figures_rapport.R', 'Figures du mémoire.'],
   ['SQL/base_cacao_cafe_postgresql.sql', 'PostgreSQL · création de la table, import, vérifications.'],

@@ -11,6 +11,7 @@ Le site présente la démarche et les résultats, et permet de :
 - visualiser le test des bornes selon le seuil et le sens du modèle ;
 - comparer le prix du café à son équilibre de long terme, mois par mois ;
 - simuler un choc sur le prix du cacao et voir la réponse du café (multiplicateurs dynamiques du modèle) ;
+- suivre l'élasticité estimée de façon récursive et la prévision hors échantillon 2024-2026 ;
 - interroger la base de données en SQL directement dans le navigateur ;
 - lire tous les scripts R et SQL.
 
@@ -22,6 +23,7 @@ Les prix du cacao et du café Arabica sont cointégrés, mais dans un seul sens 
 - Élasticité de long terme du café au cacao : 0,87
 - Terme de correction d'erreur : −0,060, soit une demi-vie d'environ 11 mois
 - Diagnostics validés, relation stable (CUSUM), résultat confirmé par 8 variantes
+- Estimé sur 2000-2023 seulement, le modèle prévoit la flambée du café de 2024-2026 avec une erreur 5 fois plus faible qu'un prix figé et 6,5 fois plus faible qu'un modèle sans cacao
 
 ## Contenu du dépôt
 
@@ -35,6 +37,7 @@ R/
   projet_cacao_cafe.R       script complet et reproductible (annexe F du mémoire)
   travail_R_base_SQL.R      R connecté à PostgreSQL : requêtes, stats en niveau, ARDL, écriture dans la base
   etape1_donnees.R … etape6_robustesse.R   les six étapes de l'analyse
+  analyses_complementaires.R  estimation récursive, prévision hors échantillon, figures E2 et E3
   donnees_site.R            calcule les données du site à partir du modèle
   figures_rapport.R         figures du mémoire
   CMO-Historical-Data-Monthly.xlsx, base_cacao_cafe_2000_2026.csv   données
@@ -42,7 +45,8 @@ SQL/
   base_cacao_cafe_postgresql.sql   création de la table prix, import, vérifications
   analyses_sql_postgresql.sql      jointure, vues, fenêtrage, CORR, REGR
   donnees_sql.csv                  données importées dans PostgreSQL
-figures/                    figures du mémoire et captures (terminal Linux, RStudio)
+figures/                    figures du mémoire et captures (terminal Linux, RStudio), QR code du site
+docs/memoire_cacao_cafe.pdf le mémoire complet
 ```
 
 ## Reproduire l'analyse
@@ -62,6 +66,7 @@ install.packages(c("readxl", "DBI", "RPostgres", "tseries", "urca", "ARDL",
                    "performance", "lmtest", "car", "strucchange", "vars", "jsonlite"))
 source("travail_R_base_SQL.R")   # R branché sur la base PostgreSQL
 source("projet_cacao_cafe.R")    # toute l'analyse
+source("analyses_complementaires.R")  # estimation récursive et prévision
 ```
 
 ## Données

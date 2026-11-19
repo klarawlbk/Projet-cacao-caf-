@@ -327,3 +327,33 @@ footer{padding:40px 0 60px;border-top:1px solid var(--border)}
 .tabs::-webkit-scrollbar,.viewer pre::-webkit-scrollbar,.sqlout::-webkit-scrollbar,.scroll::-webkit-scrollbar,.pipeline::-webkit-scrollbar{height:8px;width:8px}
 .tabs::-webkit-scrollbar-track,.viewer pre::-webkit-scrollbar-track{background:#1f1813}
 .tabs::-webkit-scrollbar-thumb,.viewer pre::-webkit-scrollbar-thumb,.sqlout::-webkit-scrollbar-thumb,.scroll::-webkit-scrollbar-thumb,.pipeline::-webkit-scrollbar-thumb{background:#5a4738;border-radius:8px}
+
+/* glossaire */
+.gl{border-bottom:1.5px dotted var(--accent);cursor:help;text-decoration:none}
+#tip.def{max-width:300px;font-size:.84rem;line-height:1.45}
+#tip.def .t{color:var(--accent)}
+
+/* téléchargements */
+.downloads{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+.dl{display:flex;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 16px;text-decoration:none;color:var(--text);box-shadow:var(--shadow);transition:transform .15s,border-color .15s}
+.dl:hover{transform:translateY(-2px);border-color:var(--accent)}
+.dl .ic{font:700 .78rem "JetBrains Mono",monospace;background:var(--cacao);color:#fff;border-radius:8px;padding:10px 8px;min-width:46px;text-align:center}
+.dl b{display:block}
+.dl small{color:var(--muted);font-size:.8rem}
+
+/* épreuve du temps */
+.prevgrid{grid-template-columns:1.5fr 1fr}
+.lg.l-el::before{background:var(--cafe)}
+.lg.l-band::before{background:color-mix(in srgb,var(--cafe) 25%,transparent);height:10px}
+.lg.l-sig::before{background:var(--ok);height:5px}
+.lg.l-ref::before{background:repeating-linear-gradient(90deg,var(--cacao) 0 5px,transparent 5px 8px)}
+.lg.l-real::before{background:var(--text)}
+.lg.l-ardl::before{background:repeating-linear-gradient(90deg,var(--cafe) 0 6px,transparent 6px 9px)}
+.lg.l-sc::before{background:repeating-linear-gradient(90deg,var(--bad) 0 3px,transparent 3px 6px)}
+.lg.l-naif::before{background:repeating-linear-gradient(90deg,var(--muted) 0 8px,transparent 8px 11px)}
+.ebar{margin:12px 0}
+.ebar .top{display:flex;justify-content:space-between;font-size:.88rem;margin-bottom:4px}
+.ebar .top b{font-family:"JetBrains Mono",monospace}
+.ebar .track{height:12px;border-radius:6px;background:var(--surface2);overflow:hidden}
+.ebar .fill{height:100%;border-radius:6px;width:0;transition:width 1s cubic-bezier(.2,.8,.2,1)}
+@media (max-width:820px){.downloads,.prevgrid{grid-template-columns:1fr}}

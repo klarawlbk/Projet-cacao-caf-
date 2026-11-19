@@ -24,6 +24,7 @@
       <a href="#equilibre">Équilibre</a>
       <a href="#simulateur">Simulateur</a>
       <a href="#robustesse">Robustesse</a>
+      <a href="#epreuve">Prévision</a>
       <a href="#sql">SQL live</a>
       <a href="#code">Code</a>
     </div>
@@ -39,19 +40,20 @@
   <div class="wrap hero-in">
     <div class="eyebrow">Projet d'économétrie · Master 1 FRD · 2026</div>
     <h1>Du <span class="cacao">cacao</span> au <span class="cafe">café</span>,<br>une relation de <em>long terme</em>&nbsp;?</h1>
-    <p class="lead">26 ans de prix mondiaux, un modèle ARDL et un test de cointégration pour savoir si le prix du café suit durablement celui du cacao. Tout ce que vous voyez ici est calculé à partir de nos propres données et de nos propres estimations.</p>
+    <p class="lead">26 ans de prix mondiaux, un modèle ARDL et un test de <span class="gl" data-gl="cointegration">cointégration</span> pour savoir si le prix du café suit durablement celui du cacao. Tout ce que vous voyez ici est calculé à partir de nos propres données et de nos propres estimations.</p>
     <div class="team">
       <span>Klara Willebrouck</span><span>William Ngoie</span><span>Chryst-Emmanuel Igondjo Nguema</span>
     </div>
     <div class="kpis">
-      <div class="kpi"><div class="v"><span data-count="5.88" data-dec="2">0</span></div><div class="l">Statistique F du test des bornes</div><div class="d">au-dessus de la borne I(1) à 1 % : cointégration</div></div>
-      <div class="kpi"><div class="v"><span data-count="0.87" data-dec="2">0</span></div><div class="l">Élasticité de long terme</div><div class="d">+10 % sur le cacao → +8,7 % sur le café</div></div>
-      <div class="kpi"><div class="v">−<span data-count="6.0" data-dec="1">0</span>&nbsp;%</div><div class="l">Correction par mois</div><div class="d">part de l'écart à l'équilibre résorbée</div></div>
-      <div class="kpi"><div class="v"><span data-count="11.3" data-dec="1">0</span>&nbsp;mois</div><div class="l">Demi-vie d'un choc</div><div class="d">temps pour combler la moitié de l'écart</div></div>
+      <div class="kpi"><div class="v"><span data-count="5.88" data-dec="2">0</span></div><div class="l">Statistique F du <span class="gl" data-gl="bornes">test des bornes</span></div><div class="d">au-dessus de la borne I(1) à 1 % : cointégration</div></div>
+      <div class="kpi"><div class="v"><span data-count="0.87" data-dec="2">0</span></div><div class="l"><span class="gl" data-gl="elasticite">Élasticité</span> de long terme</div><div class="d">+10 % sur le cacao → +8,7 % sur le café</div></div>
+      <div class="kpi"><div class="v">−<span data-count="6.0" data-dec="1">0</span>&nbsp;%</div><div class="l"><span class="gl" data-gl="ect">Correction</span> par mois</div><div class="d">part de l'écart à l'équilibre résorbée</div></div>
+      <div class="kpi"><div class="v"><span data-count="11.3" data-dec="1">0</span>&nbsp;mois</div><div class="l"><span class="gl" data-gl="demivie">Demi-vie</span> d'un choc</div><div class="d">temps pour combler la moitié de l'écart</div></div>
     </div>
     <div class="cta">
       <a class="btn primary" href="#simulateur">Lancer le simulateur de choc</a>
       <a class="btn" href="#sql">Interroger la base en SQL</a>
+      <a class="btn" href="docs/memoire_cacao_cafe.pdf" target="_blank" rel="noopener">Lire le mémoire (PDF)</a>
       <a class="btn ghost" id="repo-link" href="#code">Code sur GitHub ↗</a>
     </div>
   </div>
@@ -172,7 +174,7 @@
     <div class="sechead">
       <div class="num">05</div>
       <div><h2>Simulateur : et si le cacao flambait&nbsp;?</h2>
-      <p class="intro">Choisissez un choc permanent sur le prix du cacao. La courbe montre comment le prix du café réagit mois après mois, d'après les multiplicateurs dynamiques de notre modèle ARDL(2,1,1,0), toutes choses égales par ailleurs.</p></div>
+      <p class="intro">Choisissez un choc permanent sur le prix du cacao. La courbe montre comment le prix du café réagit mois après mois, d'après les <span class="gl" data-gl="multiplicateurs">multiplicateurs dynamiques</span> de notre modèle <span class="gl" data-gl="ardl">ARDL(2,1,1,0)</span>, toutes choses égales par ailleurs.</p></div>
     </div>
     <div class="simgrid">
       <div class="card">
@@ -215,22 +217,56 @@
         <h3>Diagnostics du modèle final</h3>
         <div id="diags"></div>
         <div class="causal">
-          <div class="cbox no"><b>Causalité de Granger</b><span>Non, dans les deux sens (p = 0,27 et 0,30, Toda-Yamamoto)</span></div>
-          <div class="cbox yes"><b>Exogénéité faible</b><span>C'est le café qui corrige l'écart (−0,054, p &lt; 0,001), pas le cacao (p = 0,58)</span></div>
+          <div class="cbox no"><b><span class="gl" data-gl="granger">Causalité de Granger</span></b><span>Non, dans les deux sens (p = 0,27 et 0,30, Toda-Yamamoto)</span></div>
+          <div class="cbox yes"><b><span class="gl" data-gl="exogeneite">Exogénéité faible</span></b><span>C'est le café qui corrige l'écart (−0,054, p &lt; 0,001), pas le cacao (p = 0,58)</span></div>
         </div>
-        <figure class="mini"><img src="figures/fig2_cusum.png" alt="Tests CUSUM et CUSUM des carrés" loading="lazy"><figcaption>CUSUM et CUSUM des carrés : la relation est stable de 2000 à 2026.</figcaption></figure>
+        <figure class="mini"><img src="figures/fig2_cusum.png" alt="Tests CUSUM et CUSUM des carrés" loading="lazy"><figcaption><span class="gl" data-gl="cusum">CUSUM</span> et CUSUM des carrés : la relation est stable de 2000 à 2026.</figcaption></figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================ EPREUVE DU TEMPS ============================ -->
+<section id="epreuve" class="band">
+  <div class="wrap">
+    <div class="sechead">
+      <div class="num">07</div>
+      <div><h2>Le modèle à l'épreuve du temps</h2>
+      <p class="intro">Deux tests supplémentaires, absents des consignes, pour vérifier que la relation n'est pas un accident de l'échantillon : réestimer le modèle à mesure que les données s'accumulent, puis lui demander de <b>prévoir une période qu'il n'a jamais vue</b>.</p></div>
+    </div>
+    <div class="card">
+      <div class="cardhead"><h3>L'élasticité se stabilise à mesure que l'échantillon s'allonge</h3>
+        <div class="seg small" id="recmode"><button data-r="recursive" class="on">Récursive (depuis 2000)</button><button data-r="glissante">Fenêtres de 10 ans</button></div></div>
+      <p class="muted small" id="recnote"></p>
+      <div class="chart" id="ch-rec"></div>
+      <div class="legend"><span class="lg l-el">Élasticité de long terme</span><span class="lg l-band">Intervalle à 95 %</span><span class="lg l-sig">Cointégration significative à 5 %</span><span class="lg l-ref">Modèle final (0,87)</span></div>
+    </div>
+    <div class="grid2 mt prevgrid">
+      <div class="card">
+        <h3>Prévoir la flambée du café sans l'avoir vue</h3>
+        <p class="muted small">Modèle estimé sur <b>2000-2023 uniquement</b>, puis prévision de 2024 à 2026 à partir des prix observés du cacao, du sucre et du Brent. Le prix du café n'est jamais montré au modèle sur cette période.</p>
+        <div class="chart" id="ch-prev"></div>
+        <div class="legend"><span class="lg l-real">Prix observé</span><span class="lg l-ardl">Prévision ARDL</span><span class="lg l-sc">Sans le cacao</span><span class="lg l-naif">Prix figé (marche aléatoire)</span></div>
+      </div>
+      <div class="card">
+        <h3>Erreur moyenne de prévision</h3>
+        <p class="muted small">Écart moyen entre prévision et réalité sur les 33 mois de 2024-2026.</p>
+        <div id="errbars"></div>
+        <div class="verdictline small" style="margin-top:14px">Sans l'information sur le cacao, le modèle prévoit un café en <b>baisse</b> vers 3,80 $/kg ; il est en réalité monté au-dessus de 9 $/kg. Avec le cacao, la prévision suit la flambée : en janvier 2025, elle donne <b>7,81 $/kg</b>, exactement le prix observé.</div>
+        <p class="note">Prévision conditionnelle : elle utilise les prix réellement observés du cacao, du sucre et du Brent. Elle montre que la relation estimée avant la crise explique la crise, pas qu'on pouvait prévoir le prix du cacao.</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ============================ SQL ============================ -->
-<section id="sql" class="band">
+<section id="sql">
   <div class="wrap">
     <div class="sechead">
-      <div class="num">07</div>
+      <div class="num">08</div>
       <div><h2>La base SQL, en direct dans votre navigateur</h2>
-      <p class="intro">Nos données sont rangées dans une base PostgreSQL créée en ligne de commande, que R lit directement et dans laquelle il réécrit ses résultats. Ici, une copie de la base tourne dans votre navigateur (SQLite compilé en WebAssembly) : <b>écrivez vos propres requêtes</b> ou lancez nos exemples.</p></div>
+      <p class="intro">Nos données sont rangées dans une base PostgreSQL créée en ligne de commande, que R lit directement et dans laquelle il réécrit ses résultats. Ici, une copie de la base tourne dans votre navigateur (SQLite compilé en <span class="gl" data-gl="wasm">WebAssembly</span>) : <b>écrivez vos propres requêtes</b> ou lancez nos exemples.</p></div>
     </div>
     <div class="pipeline">
       <div class="pstep"><b>Excel</b><span>Pink Sheet de la Banque mondiale</span></div>
@@ -259,10 +295,10 @@
 </section>
 
 <!-- ============================ CODE ============================ -->
-<section id="code">
+<section id="code" class="band">
   <div class="wrap">
     <div class="sechead">
-      <div class="num">08</div>
+      <div class="num">09</div>
       <div><h2>Tout le code</h2>
       <p class="intro">Les scripts R et SQL du projet, lisibles ici et téléchargeables sur GitHub. Le script complet reprend toute l'analyse ; les scripts d'étapes la détaillent ; <code>travail_R_base_SQL.R</code> fait le pont entre R et PostgreSQL.</p></div>
     </div>
@@ -275,12 +311,17 @@
 </section>
 
 <!-- ============================ REPRODUIRE ============================ -->
-<section id="reproduire" class="band">
+<section id="reproduire">
   <div class="wrap">
     <div class="sechead">
-      <div class="num">09</div>
+      <div class="num">10</div>
       <div><h2>Refaire l'analyse chez soi</h2>
-      <p class="intro">Tout est reproductible en trois commandes : télécharger le dépôt (bouton vert <b>Code → Download ZIP</b> sur GitHub), créer la base, lancer R.</p></div>
+      <p class="intro">Tout est reproductible en trois commandes : télécharger le projet, créer la base, lancer R.</p></div>
+    </div>
+    <div class="downloads">
+      <a class="dl" href="docs/memoire_cacao_cafe.pdf" download><span class="ic">PDF</span><span><b>Le mémoire</b><small>version complète avec annexes</small></span></a>
+      <a class="dl" href="SQL/donnees_sql.csv" download><span class="ic">CSV</span><span><b>Les données</b><small>321 mois, 6 prix, prêtes pour R ou SQL</small></span></a>
+      <a class="dl" id="dl-zip" href="#"><span class="ic">ZIP</span><span><b>Tout le projet</b><small>scripts R et SQL, données, figures</small></span></a>
     </div>
     <div class="grid3">
       <div class="card"><div class="stepn">1</div><h3>Créer la base</h3><p class="muted small">Terminal Linux, dossier <code>SQL/</code></p>
