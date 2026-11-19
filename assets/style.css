@@ -321,3 +321,9 @@ footer{padding:40px 0 60px;border-top:1px solid var(--border)}
 .viewer .c-kw{color:#e98a6b;font-weight:600}
 .viewer .c-fn{color:#7ab4ea}
 .viewer .c-op{color:#e6c15a}
+
+/* barres de défilement assorties au thème */
+.tabs,.viewer pre,.sqlout,.scroll,.pipeline{scrollbar-width:thin;scrollbar-color:#5a4738 transparent}
+.tabs::-webkit-scrollbar,.viewer pre::-webkit-scrollbar,.sqlout::-webkit-scrollbar,.scroll::-webkit-scrollbar,.pipeline::-webkit-scrollbar{height:8px;width:8px}
+.tabs::-webkit-scrollbar-track,.viewer pre::-webkit-scrollbar-track{background:#1f1813}
+.tabs::-webkit-scrollbar-thumb,.viewer pre::-webkit-scrollbar-thumb,.sqlout::-webkit-scrollbar-thumb,.scroll::-webkit-scrollbar-thumb,.pipeline::-webkit-scrollbar-thumb{background:#5a4738;border-radius:8px}

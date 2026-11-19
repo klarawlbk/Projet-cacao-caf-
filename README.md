@@ -1,6 +1,6 @@
 # Du cacao au café : existe-t-il une relation de long terme entre les prix mondiaux de ces deux matières premières ?
 
-Projet d'économétrie – Master 1 (2026)  
+Projet d'économétrie – Master 1 FRD (2026)  
 Klara Willebrouck, William Ngoie et Chryst-Emmanuel Igondjo Nguema
 
 **Site interactif du projet : https://klarawlbk.github.io/Projet-cacao-caf-/**
