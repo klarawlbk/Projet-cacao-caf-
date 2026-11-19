@@ -3,9 +3,9 @@
 #  mondiaux de ces deux matières premières ?          — script complet (R)
 #  Données : Banque mondiale, Pink Sheet, CMO-Historical-Data-Monthly.xlsx
 # =============================================================================
-# install.packages(c("readxl","DBI","RPostgreSQL","tseries","urca","ARDL",
+# install.packages(c("readxl","DBI","RPostgres","tseries","urca","ARDL",
 #                    "performance","lmtest","car","strucchange","vars"))
-library(readxl); library(DBI); library(RPostgreSQL); library(tseries); library(urca)
+library(readxl); library(DBI); library(RPostgres); library(tseries); library(urca)
 library(ARDL); library(performance); library(lmtest); library(car)
 library(strucchange); library(vars)
 
@@ -28,8 +28,8 @@ data_ts <- ts(data[, -1], start = c(2000, 1), frequency = 12)
 #   psql -d cacao_cafe -f base_cacao_cafe_postgresql.sql
 write.csv(transform(data[, c("date", names(series))], date = format(date)),
           "donnees_sql.csv", row.names = FALSE)
-con <- tryCatch(dbConnect(PostgreSQL(), dbname = "cacao_cafe", host = "localhost",
-                          user = "postgres", password = "votre_mot_de_passe"),
+con <- tryCatch(dbConnect(Postgres(), dbname = "cacao_cafe", host = "localhost",
+                          user = "postgres", password = "postgres"),
                 error = function(e) NULL)
 if (!is.null(con)) {                                # lecture de la base SQL dans R
   prix_sql <- dbGetQuery(con, "SELECT * FROM prix ORDER BY date")

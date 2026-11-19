@@ -27,6 +27,7 @@ R/
   etape4_modelisation_ardl.R   analyse combinatoire des contrôles, auto_ardl, AIC/BIC, test des bornes
   etape5_resultats.R           long terme, ECM, diagnostics (check_*), CUSUM
   etape6_robustesse.R          variantes de robustesse, Toda-Yamamoto, exogénéité faible
+  travail_R_base_SQL.R         R connecté à PostgreSQL : requêtes, stats en niveau, ARDL, écriture dans la base
   figures_rapport.R            figures du mémoire
   CMO-Historical-Data-Monthly.xlsx   données brutes (Banque mondiale, Pink Sheet)
   base_cacao_cafe_2000_2026.csv      base préparée (créée par etape1)
@@ -43,7 +44,7 @@ index.html                           site de présentation (GitHub Pages)
 1. Ouvrir RStudio et choisir le dossier `R/` comme répertoire de travail (*Session > Set Working Directory > To Source File Location*).
 2. Installer les packages une seule fois :
    ```r
-   install.packages(c("readxl", "DBI", "RPostgreSQL", "tseries", "urca", "ARDL",
+   install.packages(c("readxl", "DBI", "RPostgres", "RPostgreSQL", "tseries", "urca", "ARDL",
                       "performance", "lmtest", "car", "strucchange", "vars"))
    ```
 3. Lancer `projet_cacao_cafe.R` (tout en un) ou les scripts `etape1` à `etape6` dans l'ordre.
