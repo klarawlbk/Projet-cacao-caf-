@@ -1,59 +1,53 @@
 # Du cacao au café : existe-t-il une relation de long terme entre les prix mondiaux de ces deux matières premières ?
 
-Projet d'économétrie – Master 1  
-William Ngoiem et Klara Willebrouck
+Projet d'économétrie – Master 1 (2026)  
+Klara Willebrouck, William Ngoie et Chryst-Emmanuel Igondjo Nguema
 
-**Site de présentation du projet** : la page `index.html`, publiée avec GitHub Pages (lien en haut à droite du dépôt, rubrique *About*), présente la démarche, les résultats, les figures et permet de lire tous les scripts.
+**Site interactif du projet : https://klarawlbk.github.io/Projet-cacao-caf-/**
 
-Ce dépôt contient l'ensemble du code utilisé dans notre mémoire : l'analyse économétrique sous **R** et la base de données sous **PostgreSQL**, créée et interrogée dans un terminal Linux (Ubuntu sous WSL).
+Le site présente la démarche et les résultats, et permet de :
+- explorer les six séries de prix (zoom sur une période, base 100 ou prix) ;
+- suivre la corrélation glissante cacao-café selon l'horizon choisi ;
+- visualiser le test des bornes selon le seuil et le sens du modèle ;
+- comparer le prix du café à son équilibre de long terme, mois par mois ;
+- simuler un choc sur le prix du cacao et voir la réponse du café (multiplicateurs dynamiques du modèle) ;
+- interroger la base de données en SQL directement dans le navigateur ;
+- lire tous les scripts R et SQL.
 
 ## Résultat principal
 
 Les prix du cacao et du café Arabica sont cointégrés, mais dans un seul sens : le prix du café s'ajuste vers un équilibre de long terme fixé par le cacao (avec le sucre et le Brent en contrôles).
 
-- Modèle ARDL(2,1,1,0), test des bornes de Pesaran, Shin et Smith (2001) : F = 5,88 (p = 0,006)
+- ARDL(2,1,1,0), test des bornes de Pesaran, Shin et Smith (2001) : F = 5,88 (p = 0,006)
 - Élasticité de long terme du café au cacao : 0,87
 - Terme de correction d'erreur : −0,060, soit une demi-vie d'environ 11 mois
-- Tous les diagnostics sont validés (normalité, autocorrélation, hétéroscédasticité, RESET, CUSUM)
+- Diagnostics validés, relation stable (CUSUM), résultat confirmé par 8 variantes
 
-## Contenu
+## Contenu du dépôt
 
 ```
+index.html                  site de présentation (GitHub Pages)
+assets/                     style, scripts et données du site
+  data/modele.json          séries, équilibre, multiplicateurs (créé par R/donnees_site.R)
+  data/resultats.json       tableaux de résultats (stationnarité, robustesse, diagnostics)
+  vendor/                   bibliothèques locales (sql.js, highlight.js)
 R/
-  projet_cacao_cafe.R          script complet et reproductible (celui de l'annexe F)
-  etape1_donnees.R             import du Pink Sheet, préparation, statistiques descriptives
-  etape2_stationnarite.R       tests ADF, KPSS, PP, Zivot-Andrews
-  etape3_exploration_sens.R    test des bornes dans les deux sens (choix de la variable expliquée)
-  etape4_modelisation_ardl.R   analyse combinatoire des contrôles, auto_ardl, AIC/BIC, test des bornes
-  etape5_resultats.R           long terme, ECM, diagnostics (check_*), CUSUM
-  etape6_robustesse.R          variantes de robustesse, Toda-Yamamoto, exogénéité faible
-  travail_R_base_SQL.R         R connecté à PostgreSQL : requêtes, stats en niveau, ARDL, écriture dans la base
-  figures_rapport.R            figures du mémoire
-  CMO-Historical-Data-Monthly.xlsx   données brutes (Banque mondiale, Pink Sheet)
-  base_cacao_cafe_2000_2026.csv      base préparée (créée par etape1)
+  projet_cacao_cafe.R       script complet et reproductible (annexe F du mémoire)
+  travail_R_base_SQL.R      R connecté à PostgreSQL : requêtes, stats en niveau, ARDL, écriture dans la base
+  etape1_donnees.R … etape6_robustesse.R   les six étapes de l'analyse
+  donnees_site.R            calcule les données du site à partir du modèle
+  figures_rapport.R         figures du mémoire
+  CMO-Historical-Data-Monthly.xlsx, base_cacao_cafe_2000_2026.csv   données
 SQL/
-  base_cacao_cafe_postgresql.sql     création de la table, import du CSV, requêtes de vérification
-  analyses_sql_postgresql.sql        analyses complémentaires (jointure, vues, fenêtrage, CORR, REGR)
-  donnees_sql.csv                    données importées dans PostgreSQL (exportées par R)
-figures/                             figures du mémoire et captures du terminal
-index.html                           site de présentation (GitHub Pages)
+  base_cacao_cafe_postgresql.sql   création de la table prix, import, vérifications
+  analyses_sql_postgresql.sql      jointure, vues, fenêtrage, CORR, REGR
+  donnees_sql.csv                  données importées dans PostgreSQL
+figures/                    figures du mémoire et captures (terminal Linux, RStudio)
 ```
 
-## Reproduire l'analyse sous R
+## Reproduire l'analyse
 
-1. Ouvrir RStudio et choisir le dossier `R/` comme répertoire de travail (*Session > Set Working Directory > To Source File Location*).
-2. Installer les packages une seule fois :
-   ```r
-   install.packages(c("readxl", "DBI", "RPostgres", "RPostgreSQL", "tseries", "urca", "ARDL",
-                      "performance", "lmtest", "car", "strucchange", "vars"))
-   ```
-3. Lancer `projet_cacao_cafe.R` (tout en un) ou les scripts `etape1` à `etape6` dans l'ordre.
-
-La connexion à PostgreSQL dans la partie 2 du script est facultative : si la base n'existe pas sur l'ordinateur, le script continue normalement.
-
-## Reproduire la base SQL (PostgreSQL)
-
-Dans un terminal Linux, depuis le dossier `SQL/` :
+**Base de données** (terminal Linux, dossier `SQL/`) :
 
 ```bash
 createdb cacao_cafe
@@ -61,9 +55,20 @@ psql -d cacao_cafe -f base_cacao_cafe_postgresql.sql
 psql -P pager=off -d cacao_cafe -f analyses_sql_postgresql.sql
 ```
 
-Le premier script crée la table `prix` (clé primaire sur la date, contraintes `CHECK` de prix positifs) et importe les 321 mois. Le second ajoute une table `variables`, deux vues et calcule des statistiques directement en SQL ; la corrélation obtenue (0,79 en niveau, 0,22 en variation) est identique à celle calculée sous R.
+**Analyse sous R** (RStudio, dossier `R/` comme répertoire de travail) :
+
+```r
+install.packages(c("readxl", "DBI", "RPostgres", "tseries", "urca", "ARDL",
+                   "performance", "lmtest", "car", "strucchange", "vars", "jsonlite"))
+source("travail_R_base_SQL.R")   # R branché sur la base PostgreSQL
+source("projet_cacao_cafe.R")    # toute l'analyse
+```
 
 ## Données
 
 Banque mondiale, *Commodity Markets – Pink Sheet*, prix mensuels de janvier 2000 à septembre 2026 : cacao, café Arabica, café Robusta, sucre, pétrole Brent, urée.  
 https://www.worldbank.org/en/research/commodity-markets
+
+## Bibliothèques utilisées par le site
+
+sql.js (SQLite compilé en WebAssembly, licence MIT) et highlight.js (licence BSD), copiées dans `assets/vendor/`.

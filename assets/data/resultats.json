@@ -1,0 +1,184 @@
+{
+"variantes": [
+{
+"nom": "Modèle principal (Arabica)",
+"periode": "2000-01 - 2026-09",
+"n": 319,
+"ordre": "(2,1,1,0)",
+"F": 5.88,
+"p": 0.0063,
+"elast": 0.869,
+"ect": -0.06,
+"demi_vie": 11.3
+},
+{
+"nom": "Robusta au lieu d'Arabica",
+"periode": "2000-01 - 2026-09",
+"n": 319,
+"ordre": "(2,1,0,0)",
+"F": 5.48,
+"p": 0.0109,
+"elast": 0.729,
+"ect": -0.064,
+"demi_vie": 10.4
+},
+{
+"nom": "Sans Brent",
+"periode": "2000-01 - 2026-09",
+"n": 319,
+"ordre": "(2,1,1)",
+"F": 7.53,
+"p": 0.0025,
+"elast": 0.921,
+"ect": -0.055,
+"demi_vie": 12.2
+},
+{
+"nom": "Avec urée",
+"periode": "2000-01 - 2026-09",
+"n": 319,
+"ordre": "(2,1,1,0,1)",
+"F": 5.35,
+"p": 0.0065,
+"elast": 0.712,
+"ect": -0.074,
+"demi_vie": 9.0
+},
+{
+"nom": "Cacao seul (bivarié)",
+"periode": "2000-01 - 2026-09",
+"n": 319,
+"ordre": "(2,1)",
+"F": 9.11,
+"p": 0.0036,
+"elast": 1.16,
+"ect": -0.041,
+"demi_vie": 16.6
+},
+{
+"nom": "Dummy crise 2024-2025",
+"periode": "2000-01 - 2026-09",
+"n": 319,
+"ordre": "(2,1,1,0)",
+"F": 5.22,
+"p": 0.016,
+"elast": 0.899,
+"ect": -0.059,
+"demi_vie": 11.3
+},
+{
+"nom": "Avant la crise",
+"periode": "2000-01 - 2023-12",
+"n": 286,
+"ordre": "(2,0,1,0)",
+"F": 5.3,
+"p": 0.0143,
+"elast": 0.845,
+"ect": -0.064,
+"demi_vie": 10.6
+},
+{
+"nom": "Avant le Covid",
+"periode": "2000-01 - 2019-12",
+"n": 238,
+"ordre": "(2,0,1,0)",
+"F": 6.57,
+"p": 0.0025,
+"elast": 0.692,
+"ect": -0.088,
+"demi_vie": 7.6
+},
+{
+"nom": "Depuis 2010",
+"periode": "2010-01 - 2026-09",
+"n": 199,
+"ordre": "(2,2,1,0)",
+"F": 4.48,
+"p": 0.0434,
+"elast": 0.794,
+"ect": -0.075,
+"demi_vie": 8.9
+}
+],
+"stationnarite": [
+{
+"serie": "log Cacao",
+"adf_niv": -2.807,
+"kpss_niv": 0.15,
+"adf_dif": -5.877,
+"kpss_dif": 0.058
+},
+{
+"serie": "log Café Arabica",
+"adf_niv": -2.241,
+"kpss_niv": 0.19,
+"adf_dif": -11.133,
+"kpss_dif": 0.078
+},
+{
+"serie": "log Café Robusta",
+"adf_niv": -2.089,
+"kpss_niv": 0.205,
+"adf_dif": -10.962,
+"kpss_dif": 0.068
+},
+{
+"serie": "log Sucre",
+"adf_niv": -2.516,
+"kpss_niv": 0.262,
+"adf_dif": -11.499,
+"kpss_dif": 0.107
+},
+{
+"serie": "log Brent",
+"adf_niv": -2.618,
+"kpss_niv": 0.277,
+"adf_dif": -10.612,
+"kpss_dif": 0.071
+},
+{
+"serie": "log Urée",
+"adf_niv": -2.911,
+"kpss_niv": 0.211,
+"adf_dif": -5.117,
+"kpss_dif": 0.087
+}
+],
+"diagnostics": [
+{
+"test": "Normalité – Shapiro-Wilk",
+"stat": 0.992,
+"p": 0.1
+},
+{
+"test": "Normalité – Jarque-Bera",
+"stat": 5.841,
+"p": 0.054
+},
+{
+"test": "Autocorrélation – Breusch-Godfrey (1)",
+"stat": 1.403,
+"p": 0.236
+},
+{
+"test": "Autocorrélation – Breusch-Godfrey (12)",
+"stat": 18.703,
+"p": 0.096
+},
+{
+"test": "Hétéroscédasticité – Breusch-Pagan",
+"stat": 10.976,
+"p": 0.14
+},
+{
+"test": "Effets ARCH (12)",
+"stat": 10.2,
+"p": 0.598
+},
+{
+"test": "Forme fonctionnelle – RESET",
+"stat": 0.043,
+"p": 0.958
+}
+]
+}
